@@ -3,10 +3,21 @@
   "version": "1.0.0",
   "description": "screen scraper to get data from groupon pages",
   "main": "index.js",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
   "repository": "https://github.com/samfeder/groupon-scraper",
   "author": "Sam Feder <sam.feder1@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2"
+    "cheerio": "^1.0.0-rc.2",
+    "request": "^2.83.0",
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.0",
+    "serve-favicon": "~2.4.5"
   }
 }

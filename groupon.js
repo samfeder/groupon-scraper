@@ -24,39 +24,49 @@ if (!grouponUrl.startsWith('http')) {
   process.exit(0);
 }
 
+let pageCount;
 let content = [];
-request(grouponUrl, function (error, response, html) {
-  if (!error && response.statusCode == 200) {
-    const $ = cheerio.load(html);
-    $('div.cui-content').each((i, element) =>{
-      function pluckText(className){
-        return trim($(element).find(`.${className}`).text());
+
+function requestGroupon(page, callback){
+  request(`${grouponUrl}&page=${page}`, (error, response, html) => {
+    if (!error && response.statusCode == 200) {
+      console.log(`requesting page ${page} of ${pageCount}`);
+
+      const $ = cheerio.load(html);
+      pageCount =pageCount || parseInt($('li.slot').last().text())
+
+      $('div.cui-content').each((i, element) =>{
+        function pluckText(className){
+          return trim($(element).find(`.${className}`).text());
+        }
+
+        function pluckAttr(className, attr){
+          return $(element).find(`.${className}`).attr(attr);
+        }
+
+        const discountPrice = pluckText('cui-price-discount-same-size');
+        const companyName = pluckText('cui-udc-subtitle');
+
+        let image = pluckAttr('cui-image', 'data-high-quality')|| '';
+        image = image.replace(/^\/\//, '')
+
+        if (!discountPrice || !companyName ) return;
+
+        content = [...content, {companyName, discountPrice, image}];
+      });
+
+      if (page === pageCount) {
+        callback(content);
+        process.exit(0);
       }
 
-      function pluckAttr(className, attr){
-        return $(element).find(`.${className}`).attr(attr);
-      }
+      requestGroupon(page+=1, callback);
+    }
+  });
+}
 
-      const discountPrice = pluckText('cui-price-discount-same-size');
-      const companyName = pluckText('cui-udc-subtitle');
+requestGroupon(1, writeCsv);
 
-      let image = pluckAttr('cui-image', 'data-high-quality')|| '';
-      image = image.replace(/^\/\//, '')
-
-      if (!discountPrice || !companyName ) return;
-
-      content = [...content, {companyName, discountPrice, image}];
-    });
-
-    console.log(content);
-
-    try {
-      writeCsv(content)
-    } catch (e) {
-      console.error(e);
-    };
-  }
-});
 
 function writeCsv(content) {
   var result = json2csv({ data: content, fields: Object.keys(content[0])});

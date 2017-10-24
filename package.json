@@ -4,15 +4,19 @@
   "description": "A tool for screen scraping groupon's data",
   "main": "app.js",
   "dependencies": {
+    "change-case": "^3.0.1",
     "cheerio": "^1.0.0-rc.2",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
     "htmlparser2": "^3.9.2",
     "jade": "^1.11.0",
+    "json2csv": "^3.11.5",
     "jsonify": "^0.0.0",
     "morgan": "^1.9.0",
+    "optimist": "^0.6.1",
     "request": "^2.83.0",
-    "serve-favicon": "^2.4.5"
+    "serve-favicon": "^2.4.5",
+    "trim": "^0.0.1"
   },
   "devDependencies": {},
   "scripts": {
